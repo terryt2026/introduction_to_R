@@ -209,7 +209,8 @@ How would you find the median of `x`? How about the 90th percentile?
 :::
 
 ```{r}
-# your code goes here
+median(x)
+quantile(x, probs = 0.9)
 ```
 
 :::{.callout-tip title="Test your understanding"}
@@ -218,7 +219,12 @@ Use `c()` to add a missing value to the start of the vector `x`. How does that i
 :::
 
 ```{r}
-# your code goes here
+y <- c(NA, x)
+y
+
+mean(y)
+median(y)
+quantile(y, probs = 0.9, na.rm = TRUE)
 ``` 
 
 ## Matricies and Arrays 
@@ -237,7 +243,8 @@ Make a 3 by 2 matrix $B$ containing the numbers 1 to 6.
 :::
 
 ```{r}
-# your code goes here
+B <- matrix(1:6, nrow = 3, ncol = 2)
+B
 ```
 
 :::{.callout-tip title="Test your understanding"}
@@ -246,7 +253,7 @@ Use `%*% to calculate $AB$.
 :::
 
 ```{r}
-# your code goes here
+A%*%B
 ```
 
 :::{.callout-tip title="Test your understanding"}
@@ -264,7 +271,13 @@ $$ {#eq-matrix-c}
 
 
 ```{r}
-#your code goes here
+C <- matrix(
+  c(1,0,0,1,1,0,0,1,1),
+  nrow = 3
+)
+
+C_inv = solve(C, diag(x= 1, nrow = 3, ncol = 3))
+C_inv
 ```
 
 You will often want to calculate row-wise or column-wise summary statistics of matrices and other grid-like data structures. 
@@ -295,7 +308,9 @@ Calculate the column means of $C$ and the row medians of $C^{-1}$.
 :::
 
 ```{r}
-# Your code goes here
+colMeans(C)
+apply(C, 2, median)
+
 ```
 
 :::{.callout-tip}
@@ -313,7 +328,12 @@ To show the documentation for a function, put a question mark before its name. `
 
 - What is the second argument of `max()` and what does it do? 
 
+na.rm, it removes NA.
+
 - Look at the documentation for `rowSums()`. What subtle difference is there between `rowSums(A)` and `apply(X = A, MARGIN = 1, FUN = sum)`?
+
+These are equivalent, but different in speed.
+
 :::
 
 ## Data Frames 
@@ -382,7 +402,7 @@ Subset the `grades` data frame to extract the id and score of the students whose
 :::
 
 ```{r}
-# your code goes here
+grades[grades$score >= 87, c("student_id", "score")]
 ```
 
 :::{.callout-tip title="Test your understanding"}
@@ -391,7 +411,8 @@ Is there any difference between `grades$class` and `grades[ ,"class"]`?
 :::
 
 ```{r}
-# your code goes here
+grades$class
+grades[ ,"class"]
 ```
 
 You can add elements to a data.frame by assigning them to non-existent columns or rows. (Be careful of the latter!) 
@@ -468,7 +489,9 @@ Follow the previous example to use `saveRDS()` and `readRDS()` to save the `zv` 
 :::
 
 ```{r}
-# your code goes here
+saveRDS(zv, file = "zv.rds")
+rm(zv)
+zv <- readRDS("zv.rds")
 ```
 
 
@@ -557,14 +580,39 @@ Make similar plots for the standard exponential distribution.
 :::
 
 ```{r}
-# your code goes here
+x <- seq(from = 0,to = 6, by = 0.01)
+density <- dexp(x = x, rate = 1)
+
+plot(x = x, y = density, type = "l")
+
+probability <- pexp(q = x, rate = 1)
+
+plot(x = x,
+     y = probability,
+     type = "l",
+     main = "CDF of standard Exponential distribution")
+
+p <- ppoints(1001)
+quantile <- qexp(p = p, rate = 1)
+
+plot(
+  x = p,
+  y = quantile,
+  type = "l",
+  main = "Inverse CDF of standard Exponential distribution")
 ```
 
 :::{.callout-tip title="Test your understanding"}
 
 
-- What do you think are the names of the equivalent functions for the continuous uniform distribution? 
+- What do you think are the names of the equivalent functions for the continuous uniform distribution?
+
+dunif, runif, punif, qunif.
+
 - Why might one of these names be confusing?
+
+runif might be.
+
 :::
 
 ## Simulating from statistical distributions 
@@ -645,7 +693,15 @@ e) Use `hist()` to create a histogram for each of your samples.
 :::
 
 ```{r}
-# your code goes here
+set.seed(1234)
+a <- rnorm(n = 500, mean = 2, sd = 1)
+b <- rnorm(n = 200, mean = 5, sd = 3)
+
+qqnorm(a)
+qqnorm(b)
+
+hist(a)
+hist(b)
 ```
 
 
@@ -692,12 +748,16 @@ Write a loop that prints whether each number from 1 to 5 is even or odd.
 :::
 
 ```{r}
-# your code goes here
+x <- 1:5
+
+paste(x, "is", ifelse(x %% 2 == 0, "even", "odd"))
 ```
 
 :::{.callout-tip title="Test your understanding"}
 
-A useful helper functions to use with for loops is `seq_along()`. What do you think it does? 
+A useful helper functions to use with for loops is `seq_along()`. What do you think it does?
+
+A sequence of numbers along an object.
 :::
 
 
@@ -781,16 +841,20 @@ Write a loop that prints whether each number from 1 to 5 is even or odd. You mig
 :::
 
 ```{r}
-# your code goes here
+x <- 1:5
+
+paste(x, "is", ifelse(x %% 2 == 0, "even", "odd"))
 ```
 
 :::{.callout-tip title="Test your understanding"}
 
-Write code that picks a number $N$ between 5 and 10 (inclusive) uniformly at random. Write a loop that prints whether each number from n to 10 is even or odd.
+Write code that picks a number $N$ between 5 and 10 (inclusive) uniformly at random. Write a loop that prints whether each number from $N$ to 10 is even or odd.
 :::
 
 ```{r}
-# your code goes here
+x <- c(sample(5:10, size = 1):10)
+
+paste(x, "is", ifelse(x %% 2 == 0, "even", "odd"))
 ```
 
 :::{.callout-tip title="Test your understanding"}
@@ -799,7 +863,15 @@ Write code that starts with an empty vector `c()` and simulates exponential rand
 :::
 
 ```{r}
-# your code goes here
+i <- 0
+ps <- c()
+
+while (i <= 10){
+  i <- i + rexp(n = 1, rate = 1)
+  ps <- append(ps, i)
+}
+
+ps
 ```
 
 
@@ -888,6 +960,8 @@ pass_padded   <- pad_with_NAs(grades$pass,   n_left = 2, n_right = 1)
 
 :::{.callout-tip title="Test your understanding"}
 How could we further reduce repetition in this example?
+
+Somehow.
 :::
 
 :::{.callout-tip title="Test your understanding"}
@@ -900,11 +974,11 @@ column to the `airquality` data frame. _Note:_ $C = (F - 32) \times \frac{5}{9}$
 ```{r}
 airquality <- datasets::airquality
 
-farenheit_to_centigrade <- function(){
-# YOUR CODE GOES HERE
+farenheit_to_centigrade <- function(f){
+  (f - 32) * (5/9)
 }
 
-# YOUR CODE GOES HERE
+airquality$Temp_C <- farenheit_to_centigrade(airquality$Temp)
 ```
 
 Function definitions can get quite long and messy. In real-world applications we usually keep them in their own R file named after the function. This keeps any notebooks or analysis scripts easy to read and makes the relevant function definition easy to find. 
